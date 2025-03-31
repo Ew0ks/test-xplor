@@ -1,0 +1,23 @@
+# Dépendances
+node_modules/
+dist/
+build/
+
+# Fichiers de build
+*.log
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Fichiers de configuration
+.env
+.env.*
+.DS_Store
+
+# Fichiers de compilation TypeScript
+*.tsbuildinfo
+
+# Dossiers de cache
+.cache/
+.vite/

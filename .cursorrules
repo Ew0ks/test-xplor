@@ -1,0 +1,10 @@
+Projet de visualisation d'issue github.
+
+- Utilisation de Next
+- Utilisation de typescript
+- Utilisation de emotion
+- Utilisation de mui/joy
+- Utilisation de Axios via usefetch.ts
+- Utilisation de Ramda et Ramda-adjunct
+
+On code en immutable et déclaratif.
