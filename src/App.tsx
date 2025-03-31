@@ -1,7 +1,7 @@
 import Box from "@mui/joy/Box"
 import CssBaseline from "@mui/joy/CssBaseline"
 import { CssVarsProvider } from "@mui/joy/styles"
-import { isNilOrEmpty } from "ramda-adjunct"
+import { isNilOrEmpty, isNotNilOrEmpty } from "ramda-adjunct"
 import { reduce, values, propOr, pathOr, map } from "ramda"
 import { useMemo, useState } from "react"
 
@@ -13,18 +13,35 @@ import { Issue } from "./types/issue"
 import { Participant } from "./types/participant"
 
 function App() {
-  const [selectedIssueId, setSelectedIssueId] = useState<number>(7901)
+  const [selectedIssueId, setSelectedIssueId] = useState<number | null>(null)
 
   const issues = useFetch<Issue[]>({
     url: "https://api.github.com/repos/facebook/react/issues",
+    headers: {
+      Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+      Accept: "application/vnd.github.v3+json",
+    },
   })
 
-  const issue = useFetch<Issue>({
-    url: `https://api.github.com/repos/facebook/react/issues/${selectedIssueId}`,
-  })
+  const issue = useFetch<Issue>(
+    {
+      url: `https://api.github.com/repos/facebook/react/issues/${selectedIssueId}`,
+      headers: {
+        Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+        Accept: "application/vnd.github.v3+json",
+      },
+    },
+    { enabled: isNotNilOrEmpty(selectedIssueId) }
+  )
 
   const comments = useFetch<Comment[]>(
-    { url: issue.data?.comments_url },
+    {
+      url: issue.data?.comments_url,
+      headers: {
+        Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+        Accept: "application/vnd.github.v3+json",
+      },
+    },
     { enabled: issue.isFetched }
   )
 
@@ -75,7 +92,12 @@ function App() {
           />
         </Box>
         <Box component="main" sx={{ flex: 1 }}>
-          <MessagesPane issue={issue.data} comments={comments.data} />
+          <MessagesPane
+            issue={issue.data}
+            comments={comments.data}
+            error={issue.error}
+            isLoading={issue.isLoading}
+          />
         </Box>
       </Box>
     </CssVarsProvider>

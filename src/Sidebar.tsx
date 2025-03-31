@@ -21,7 +21,7 @@ type SidebarProps = {
   participants?: Participant[]
   author?: User
   issues: Array<{ id: number; title: string }>
-  selectedIssueId: number
+  selectedIssueId: number | null
   onIssueChange: (id: number) => void
 }
 

@@ -2,6 +2,7 @@ import Chip from "@mui/joy/Chip"
 import Sheet from "@mui/joy/Sheet"
 import Stack from "@mui/joy/Stack"
 import Typography from "@mui/joy/Typography"
+import Alert from "@mui/joy/Alert"
 import { always, ifElse, map } from "ramda"
 import { isNotNil } from "ramda-adjunct"
 
@@ -12,9 +13,16 @@ import { Issue } from "./types/issue"
 type MessagesPaneProps = {
   issue?: Issue
   comments?: Comment[]
+  error?: Error | null
+  isLoading?: boolean
 }
 
-export default function MessagesPane({ issue, comments }: MessagesPaneProps) {
+export default function MessagesPane({
+  issue,
+  comments,
+  error,
+  isLoading,
+}: MessagesPaneProps) {
   const isUserAuthor = (comment: Comment) =>
     comment.user.login === issue?.user?.login
   const getVariant = ifElse(
@@ -22,6 +30,71 @@ export default function MessagesPane({ issue, comments }: MessagesPaneProps) {
     always<"solid">("solid"),
     always<"outlined">("outlined")
   )
+
+  if (!issue && !isLoading && !error) {
+    return (
+      <Sheet
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "background.level1",
+        }}
+      >
+        <Typography level="h4">Aucune issue sélectionnée</Typography>
+      </Sheet>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <Sheet
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "background.level1",
+        }}
+      >
+        <Typography level="h4">Chargement...</Typography>
+      </Sheet>
+    )
+  }
+
+  if (error) {
+    return (
+      <Sheet
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "background.level1",
+          p: 2,
+        }}
+      >
+        <Alert
+          variant="soft"
+          color="danger"
+          startDecorator={":("}
+          sx={{ maxWidth: 600, flexDirection: "column" }}
+        >
+          <Typography level="title-lg">Erreur de chargement</Typography>
+          <br />
+          <Typography>
+            Impossible de charger l'issue demandée. Veuillez vérifier l'ID et
+            réessayer.
+          </Typography>
+          <br />
+          <Typography level="body-sm" sx={{ mt: 1 }}>
+            Détail: {error.message}
+          </Typography>
+        </Alert>
+      </Sheet>
+    )
+  }
 
   return (
     <Sheet
