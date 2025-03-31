@@ -77,11 +77,20 @@ export default function Sidebar({
         <Input
           placeholder="ID de l'issue"
           value={manualIssueId}
-          onChange={(e) => setManualIssueId(e.target.value)}
+          onChange={(e) => {
+            const numericValue = e.target.value.replace(/\D/g, "")
+            setManualIssueId(numericValue)
+          }}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               handleManualSubmit()
             }
+          }}
+          slotProps={{
+            input: {
+              inputMode: "numeric",
+              pattern: "[0-9]*",
+            },
           }}
           sx={{ flex: 1 }}
         />
