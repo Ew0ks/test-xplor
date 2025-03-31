@@ -23,6 +23,8 @@ type SidebarProps = {
   issues: Array<{ id: number; title: string }>
   selectedIssueId: number | null
   onIssueChange: (id: number) => void
+  filteredParticipants: string[]
+  onParticipantToggle: (login: string) => void
 }
 
 export default function Sidebar({
@@ -31,6 +33,8 @@ export default function Sidebar({
   issues = [],
   selectedIssueId,
   onIssueChange,
+  filteredParticipants,
+  onParticipantToggle,
 }: SidebarProps) {
   const [manualIssueId, setManualIssueId] = useState<string>("7901")
 
@@ -120,7 +124,19 @@ export default function Sidebar({
           {pipe(
             sort(descend((p: Participant) => p.messageCount)),
             map((participant: Participant) => (
-              <ListItem key={participant.login}>
+              <ListItem
+                key={participant.login}
+                onClick={() => onParticipantToggle(participant.login)}
+                sx={{
+                  cursor: "pointer",
+                  opacity: filteredParticipants.includes(participant.login)
+                    ? 0.5
+                    : 1,
+                  "&:hover": {
+                    bgcolor: "background.level1",
+                  },
+                }}
+              >
                 <ListItemDecorator sx={{ mr: 1 }}>
                   <Avatar src={participant.avatar_url} />
                 </ListItemDecorator>

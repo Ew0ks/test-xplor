@@ -2,7 +2,7 @@ import Box from "@mui/joy/Box"
 import CssBaseline from "@mui/joy/CssBaseline"
 import { CssVarsProvider } from "@mui/joy/styles"
 import { isNilOrEmpty, isNotNilOrEmpty } from "ramda-adjunct"
-import { reduce, values, propOr, pathOr, map } from "ramda"
+import { reduce, values, propOr, pathOr, map, reject, includes } from "ramda"
 import { useMemo, useState } from "react"
 
 import MessagesPane from "./MessagesPane"
@@ -14,6 +14,15 @@ import { Participant } from "./types/participant"
 
 function App() {
   const [selectedIssueId, setSelectedIssueId] = useState<number | null>(null)
+  const [filteredParticipants, setFilteredParticipants] = useState<string[]>([])
+
+  const toggleParticipantFilter = (login: string) => {
+    setFilteredParticipants((current) =>
+      current.includes(login)
+        ? current.filter((item) => item !== login)
+        : [...current, login]
+    )
+  }
 
   const issues = useFetch<Issue[]>({
     url: "https://api.github.com/repos/facebook/react/issues",
@@ -78,6 +87,16 @@ function App() {
     return isNilOrEmpty(userCounts) ? [] : values(userCounts)
   }, [comments.data])
 
+  // Filtrer les commentaires en fonction des participants sélectionnés
+  const filteredComments = useMemo(() => {
+    if (isNilOrEmpty(comments.data) || isNilOrEmpty(filteredParticipants))
+      return comments.data
+
+    return reject((comment: Comment) =>
+      includes(comment.user.login, filteredParticipants)
+    )(comments.data ?? [])
+  }, [comments.data, filteredParticipants])
+
   return (
     <CssVarsProvider disableTransitionOnChange>
       <CssBaseline />
@@ -89,12 +108,14 @@ function App() {
             issues={issuesList}
             selectedIssueId={selectedIssueId}
             onIssueChange={setSelectedIssueId}
+            filteredParticipants={filteredParticipants}
+            onParticipantToggle={toggleParticipantFilter}
           />
         </Box>
         <Box component="main" sx={{ flex: 1 }}>
           <MessagesPane
             issue={issue.data}
-            comments={comments.data}
+            comments={filteredComments}
             error={issue.error}
             isIssueLoading={issue.isLoading}
             areCommentsLoading={comments.isLoading}
