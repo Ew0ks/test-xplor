@@ -58,78 +58,86 @@ export default function Sidebar({
         borderColor: "divider",
       }}
     >
-      <Select
-        value={selectedIssueId}
-        onChange={(_, value) => onIssueChange(value as number)}
-        placeholder="Sélectionner une issue"
-      >
-        {issues.map((issue) => (
-          <Option key={issue.id} value={issue.id}>
-            #{issue.id} -{" "}
-            {issue.title.length > 30
-              ? `${issue.title.substring(0, 30)}...`
-              : issue.title}
-          </Option>
-        ))}
-      </Select>
-      Ou
-      <Stack direction="row" spacing={1}>
-        <Input
-          placeholder="ID de l'issue"
-          value={manualIssueId}
-          onChange={(e) => {
-            const numericValue = e.target.value.replace(/\D/g, "")
-            setManualIssueId(numericValue)
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleManualSubmit()
-            }
-          }}
-          slotProps={{
-            input: {
-              inputMode: "numeric",
-              pattern: "[0-9]*",
-            },
-          }}
-          sx={{ flex: 1 }}
-        />
-        <Button onClick={handleManualSubmit}>Charger</Button>
-      </Stack>
-      {author && (
-        <>
-          <Typography level="title-lg">Auteur</Typography>
-          <ListItem>
-            <ListItemDecorator sx={{ mr: 1 }}>
-              <Avatar src={author.avatar_url} />
-            </ListItemDecorator>
-            {author.login}
-          </ListItem>
-          <Divider />
-        </>
-      )}
-      <Typography level="title-lg">Participants</Typography>
-      <List>
-        {pipe(
-          sort(descend((p: Participant) => p.messageCount)),
-          map((participant: Participant) => (
-            <ListItem key={participant.login}>
+      <div>
+        <Select
+          value={selectedIssueId}
+          onChange={(_, value) => onIssueChange(value as number)}
+          placeholder="Sélectionner une issue"
+        >
+          {issues.map((issue) => (
+            <Option key={issue.id} value={issue.id}>
+              #{issue.id} -{" "}
+              {issue.title.length > 30
+                ? `${issue.title.substring(0, 30)}...`
+                : issue.title}
+            </Option>
+          ))}
+        </Select>
+        <Typography level="body-sm" sx={{ mt: 1 }}>
+          Ou
+        </Typography>
+        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+          <Input
+            placeholder="ID de l'issue"
+            value={manualIssueId}
+            onChange={(e) => {
+              const numericValue = e.target.value.replace(/\D/g, "")
+              setManualIssueId(numericValue)
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleManualSubmit()
+              }
+            }}
+            slotProps={{
+              input: {
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+              },
+            }}
+            sx={{ flex: 1 }}
+          />
+          <Button onClick={handleManualSubmit}>Charger</Button>
+        </Stack>
+      </div>
+
+      <div style={{ overflow: "auto", flexGrow: 1 }}>
+        {author && (
+          <>
+            <Typography level="title-lg">Auteur</Typography>
+            <ListItem>
               <ListItemDecorator sx={{ mr: 1 }}>
-                <Avatar src={participant.avatar_url} />
+                <Avatar src={author.avatar_url} />
               </ListItemDecorator>
-              {participant.login}
-              <Chip
-                size="sm"
-                variant="soft"
-                color="primary"
-                sx={{ ml: "auto" }}
-              >
-                {participant.messageCount}
-              </Chip>
+              {author.login}
             </ListItem>
-          ))
-        )(participants)}
-      </List>
+            <Divider sx={{ my: 1 }} />
+          </>
+        )}
+
+        <Typography level="title-lg">Participants</Typography>
+        <List>
+          {pipe(
+            sort(descend((p: Participant) => p.messageCount)),
+            map((participant: Participant) => (
+              <ListItem key={participant.login}>
+                <ListItemDecorator sx={{ mr: 1 }}>
+                  <Avatar src={participant.avatar_url} />
+                </ListItemDecorator>
+                {participant.login}
+                <Chip
+                  size="sm"
+                  variant="soft"
+                  color="primary"
+                  sx={{ ml: "auto" }}
+                >
+                  {participant.messageCount}
+                </Chip>
+              </ListItem>
+            ))
+          )(participants)}
+        </List>
+      </div>
     </Sheet>
   )
 }
