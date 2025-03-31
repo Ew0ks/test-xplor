@@ -96,7 +96,8 @@ function App() {
             issue={issue.data}
             comments={comments.data}
             error={issue.error}
-            isLoading={issue.isLoading}
+            isIssueLoading={issue.isLoading}
+            areCommentsLoading={comments.isLoading}
           />
         </Box>
       </Box>

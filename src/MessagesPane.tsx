@@ -14,14 +14,16 @@ type MessagesPaneProps = {
   issue?: Issue
   comments?: Comment[]
   error?: Error | null
-  isLoading?: boolean
+  isIssueLoading?: boolean
+  areCommentsLoading?: boolean
 }
 
 export default function MessagesPane({
   issue,
   comments,
   error,
-  isLoading,
+  isIssueLoading,
+  areCommentsLoading,
 }: MessagesPaneProps) {
   const isUserAuthor = (comment: Comment) =>
     comment.user.login === issue?.user?.login
@@ -31,7 +33,7 @@ export default function MessagesPane({
     always<"outlined">("outlined")
   )
 
-  if (!issue && !isLoading && !error) {
+  if (!issue && !isIssueLoading && !error) {
     return (
       <Sheet
         sx={{
@@ -47,7 +49,7 @@ export default function MessagesPane({
     )
   }
 
-  if (isLoading) {
+  if (areCommentsLoading || isIssueLoading) {
     return (
       <Sheet
         sx={{
