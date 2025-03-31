@@ -1,8 +1,9 @@
-import { Avatar } from "@mui/joy"
 import Box from "@mui/joy/Box"
+import ReactMarkdown from "react-markdown"
 import Sheet from "@mui/joy/Sheet"
 import Stack from "@mui/joy/Stack"
 import Typography from "@mui/joy/Typography"
+import { Avatar } from "@mui/joy"
 
 type ChatBubbleProps = {
   body: string
@@ -12,6 +13,7 @@ type ChatBubbleProps = {
     login: string
     avatar_url: string
   }
+  children?: React.ReactNode
 }
 
 export default function ChatBubble({
@@ -41,9 +43,46 @@ export default function ChatBubble({
               borderTopLeftRadius: 0,
             }}
           >
-            <Typography level="body-sm" color="primary">
+            <ReactMarkdown
+              components={{
+                p: ({ children }) => (
+                  <Typography level="body-sm" color="primary">
+                    {children}
+                  </Typography>
+                ),
+                a: ({ href, children }) => (
+                  <Typography
+                    component="a"
+                    href={href}
+                    target="_blank"
+                    rel="noopener"
+                    color="primary"
+                    sx={{ textDecoration: "underline" }}
+                  >
+                    {children}
+                  </Typography>
+                ),
+                code: ({ children }) => (
+                  <Typography
+                    level="body-sm"
+                    color="primary"
+                    sx={{
+                      fontFamily: "monospace",
+                      backgroundColor:
+                        variant === "solid"
+                          ? "rgba(0,0,0,0.1)"
+                          : "rgba(0,0,0,0.05)",
+                      px: 0.5,
+                      borderRadius: "sm",
+                    }}
+                  >
+                    {children}
+                  </Typography>
+                ),
+              }}
+            >
               {body}
-            </Typography>
+            </ReactMarkdown>
           </Sheet>
         </Box>
       </Box>

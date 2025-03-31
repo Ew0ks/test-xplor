@@ -2,11 +2,12 @@ import Chip from "@mui/joy/Chip"
 import Sheet from "@mui/joy/Sheet"
 import Stack from "@mui/joy/Stack"
 import Typography from "@mui/joy/Typography"
+import { always, ifElse, map } from "ramda"
+import { isNotNil } from "ramda-adjunct"
+
 import ChatBubble from "./ChatBubble"
-import { Issue } from "./types/issue"
 import { Comment } from "./types/comment"
-import * as R from "ramda"
-import * as RA from "ramda-adjunct"
+import { Issue } from "./types/issue"
 
 type MessagesPaneProps = {
   issue?: Issue
@@ -16,10 +17,10 @@ type MessagesPaneProps = {
 export default function MessagesPane({ issue, comments }: MessagesPaneProps) {
   const isUserAuthor = (comment: Comment) =>
     comment.user.login === issue?.user?.login
-  const getVariant = R.ifElse(
+  const getVariant = ifElse(
     isUserAuthor,
-    R.always<"solid">("solid"),
-    R.always<"outlined">("outlined")
+    always<"solid">("solid"),
+    always<"outlined">("outlined")
   )
 
   return (
@@ -31,7 +32,7 @@ export default function MessagesPane({ issue, comments }: MessagesPaneProps) {
         backgroundColor: "background.level1",
       }}
     >
-      {RA.isNotNil(issue) && (
+      {isNotNil(issue) && (
         <Stack
           direction="column"
           justifyContent="space-between"
@@ -64,10 +65,10 @@ export default function MessagesPane({ issue, comments }: MessagesPaneProps) {
           <Typography level="body-sm">{issue.user.login}</Typography>
         </Stack>
       )}
-      {RA.isNotNil(comments) && (
+      {isNotNil(comments) && (
         <Stack spacing={2} justifyContent="flex-end" px={2} py={3}>
           <ChatBubble variant="solid" {...issue!} />
-          {R.map(
+          {map(
             (comment: Comment) => (
               <ChatBubble
                 key={comment.id}

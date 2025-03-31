@@ -1,14 +1,16 @@
+import Avatar from "@mui/joy/Avatar"
+import Chip from "@mui/joy/Chip"
 import Input from "@mui/joy/Input"
-import Sheet from "@mui/joy/Sheet"
+import Divider from "@mui/joy/Divider"
 import List from "@mui/joy/List"
 import ListItem from "@mui/joy/ListItem"
 import ListItemDecorator from "@mui/joy/ListItemDecorator"
-import Avatar from "@mui/joy/Avatar"
+import Sheet from "@mui/joy/Sheet"
 import Typography from "@mui/joy/Typography"
-import Chip from "@mui/joy/Chip"
+import { pipe, sort, descend, map } from "ramda"
+
 import { Participant } from "./types/participant"
 import { User } from "./types/user"
-import Divider from "@mui/joy/Divider"
 
 type SidebarProps = {
   participants?: Participant[]
@@ -50,9 +52,9 @@ export default function Sidebar({ participants = [], author }: SidebarProps) {
 
       <Typography level="title-lg">Participants</Typography>
       <List>
-        {participants
-          .sort((a, b) => b.messageCount - a.messageCount)
-          .map((participant) => (
+        {pipe(
+          sort(descend((p: Participant) => p.messageCount)),
+          map((participant: Participant) => (
             <ListItem key={participant.login}>
               <ListItemDecorator sx={{ mr: 1 }}>
                 <Avatar src={participant.avatar_url} />
@@ -67,7 +69,8 @@ export default function Sidebar({ participants = [], author }: SidebarProps) {
                 {participant.messageCount}
               </Chip>
             </ListItem>
-          ))}
+          ))
+        )(participants)}
       </List>
     </Sheet>
   )
