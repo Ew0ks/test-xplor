@@ -7,12 +7,18 @@ import { always, ifElse, map } from "ramda"
 import { isNotNil } from "ramda-adjunct"
 
 import ChatBubble from "./ChatBubble"
-import { Comment } from "./types/comment"
-import { Issue } from "./types/issue"
+import { Comment } from "../types/comment"
+import { Issue } from "../types/issue"
+import { GithubEvent } from "../types/event"
+import EventBubble from "./EventBubble"
 
 type MessagesPaneProps = {
   issue?: Issue
-  comments?: Comment[]
+  timelineItems?: Array<{
+    type: "comment" | "event"
+    data: Comment | GithubEvent
+    created_at: string
+  }>
   error?: Error | null
   isIssueLoading?: boolean
   areCommentsLoading?: boolean
@@ -20,7 +26,7 @@ type MessagesPaneProps = {
 
 export default function MessagesPane({
   issue,
-  comments,
+  timelineItems,
   error,
   isIssueLoading,
   areCommentsLoading,
@@ -140,19 +146,24 @@ export default function MessagesPane({
           <Typography level="body-sm">{issue.user.login}</Typography>
         </Stack>
       )}
-      {isNotNil(comments) && (
+      {isNotNil(timelineItems) && (
         <Stack spacing={2} justifyContent="flex-end" px={2} py={3}>
           <ChatBubble variant="solid" {...issue!} />
-          {map(
-            (comment: Comment) => (
-              <ChatBubble
-                key={comment.id}
-                variant={getVariant(comment)}
-                {...comment}
-              />
-            ),
-            comments
-          )}
+          {map((item) => {
+            if (item.type === "comment") {
+              const comment = item.data as Comment
+              return (
+                <ChatBubble
+                  key={`comment-${comment.id}`}
+                  variant={getVariant(comment)}
+                  {...comment}
+                />
+              )
+            } else {
+              const event = item.data as GithubEvent
+              return <EventBubble key={`event-${event.id}`} {...event} />
+            }
+          }, timelineItems)}
         </Stack>
       )}
     </Sheet>

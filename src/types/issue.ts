@@ -8,4 +8,5 @@ export type Issue = {
   title: string
   body: string
   comments_url: string
+  events_url: string
 }

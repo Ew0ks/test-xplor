@@ -5,15 +5,10 @@ import Stack from "@mui/joy/Stack"
 import Typography from "@mui/joy/Typography"
 import { Avatar } from "@mui/joy"
 
-type ChatBubbleProps = {
-  body: string
+import { Comment } from "../types/comment"
+
+type ChatBubbleProps = Comment & {
   variant: "solid" | "outlined"
-  created_at: string
-  user: {
-    login: string
-    avatar_url: string
-  }
-  children?: React.ReactNode
 }
 
 export default function ChatBubble({
@@ -30,7 +25,9 @@ export default function ChatBubble({
           <Typography level="body-xs" fontWeight="bold">
             {user.login}
           </Typography>
-          <Typography level="body-xs">{created_at}</Typography>
+          <Typography level="body-xs">
+            {new Date(created_at).toLocaleString()}
+          </Typography>
         </Stack>
         <Box>
           <Sheet

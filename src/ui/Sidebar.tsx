@@ -11,11 +11,11 @@ import Typography from "@mui/joy/Typography"
 import Input from "@mui/joy/Input"
 import Button from "@mui/joy/Button"
 import Stack from "@mui/joy/Stack"
-import { pipe, sort, descend, map } from "ramda"
+import { pipe, sort, descend, map, includes } from "ramda"
 import { useState } from "react"
 
-import { Participant } from "./types/participant"
-import { User } from "./types/user"
+import { Participant } from "../types/participant"
+import { User } from "../types/user"
 
 type SidebarProps = {
   participants?: Participant[]
@@ -68,14 +68,17 @@ export default function Sidebar({
           onChange={(_, value) => onIssueChange(value as number)}
           placeholder="Sélectionner une issue"
         >
-          {issues.map((issue) => (
-            <Option key={issue.id} value={issue.id}>
-              #{issue.id} -{" "}
-              {issue.title.length > 30
-                ? `${issue.title.substring(0, 30)}...`
-                : issue.title}
-            </Option>
-          ))}
+          {map(
+            (issue) => (
+              <Option key={issue.id} value={issue.id}>
+                #{issue.id} -{" "}
+                {issue.title.length > 30
+                  ? `${issue.title.substring(0, 30)}...`
+                  : issue.title}
+              </Option>
+            ),
+            issues
+          )}
         </Select>
         <Typography level="body-sm" sx={{ mt: 1 }}>
           Ou
@@ -129,7 +132,7 @@ export default function Sidebar({
                 onClick={() => onParticipantToggle(participant.login)}
                 sx={{
                   cursor: "pointer",
-                  opacity: filteredParticipants.includes(participant.login)
+                  opacity: includes(participant.login, filteredParticipants)
                     ? 0.5
                     : 1,
                   "&:hover": {
