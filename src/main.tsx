@@ -9,15 +9,15 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
       refetchOnWindowFocus: false,
       retry: 1,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
     },
   },
 })
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  // Commentez temporairement le mode strict pour tester
-  // <React.StrictMode>
-  <QueryClientProvider client={queryClient}>
-    <App />
-  </QueryClientProvider>
-  // </React.StrictMode>
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  </React.StrictMode>
 )

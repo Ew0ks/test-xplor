@@ -36,10 +36,6 @@ function useFetch<T>(
       if (!(lastPage.data instanceof Array && lastPage.headers.link)) return
       return parse(lastPage.headers.link).get("rel", "next")[0]?.uri
     },
-    retry: 1,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    refetchOnWindowFocus: false,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10000),
   })
 }
 
