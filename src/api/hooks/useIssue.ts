@@ -8,6 +8,13 @@ import { GithubEvent } from "../../types/event"
 import { Participant } from "../../types/participant"
 
 export function useIssue(issueId: number | null) {
+  const issues = useFetch<Issue[]>({
+    url: "https://api.github.com/repos/facebook/react/issues",
+    headers: {
+      Authorization: `token ${import.meta.env.VITE_GITHUB_TOKEN}`,
+      Accept: "application/vnd.github.v3+json",
+    },
+  })
   const issue = useFetch<Issue>(
     {
       url: issueId
@@ -68,6 +75,7 @@ export function useIssue(issueId: number | null) {
   }, [comments.data])
 
   return {
+    issues,
     issue,
     comments,
     events,

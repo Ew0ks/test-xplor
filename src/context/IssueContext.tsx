@@ -1,10 +1,8 @@
 import { createContext, useContext, useState, ReactNode, useMemo } from "react"
 import { filter, includes, map, reject } from "ramda"
 import { isNilOrEmpty } from "ramda-adjunct"
-import useFetch from "../useFetch"
 import { useIssue } from "../api/hooks/useIssue"
 import { useTimelineItems } from "../features/issueViewer/hooks/useTimelineItems"
-import { githubApi } from "../api/github"
 import { Issue } from "../types/issue"
 import { Comment } from "../types/comment"
 import { GithubEvent } from "../types/event"
@@ -63,9 +61,8 @@ export function IssueProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  const { issue, comments, events, participants } = useIssue(selectedIssueId)
-
-  const issues = useFetch<Issue[]>(githubApi.getIssues())
+  const { issues, issue, comments, events, participants } =
+    useIssue(selectedIssueId)
 
   const issuesList = useMemo(() => {
     if (isNilOrEmpty(issues.data)) return []
